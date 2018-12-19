@@ -1,6 +1,3 @@
-// NeoPixel Ring simple sketch (c) 2013 Shae Erisson
-// released under the GPLv3 license to match the rest of the AdaFruit NeoPixel library
-
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
   #include <avr/power.h>
@@ -8,15 +5,13 @@
 
 // Which pin on the Arduino is connected to the NeoPixels?
 // On a Trinket or Gemma we suggest changing this to 1
-#define PIN            6
+#define PIN            12
 #define LED            8
 
 // How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS      2 
+#define NUMPIXELS      4
 
 // When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
-// Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
-// example for more information on possible values.
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel led = Adafruit_NeoPixel(1, LED, NEO_GRB + NEO_KHZ800);
 
@@ -27,7 +22,7 @@ const int LED_PULSE_DELAY = 125;        // Controls the speed of the onboard pul
 
 const int STRENGTH_BUTTON_PIN = 10;     // the number of the strength power pin
 const int FLY_BUTTON_PIN = 9;           // the number of the flying power pin
-const int SPEED_BUTTON_PIN = 1;         // the number of the speed power pin
+const int SPEED_BUTTON_PIN = 3;         // the number of the speed power pin
 const int XRAY_BUTTON_PIN = 2;          // the number of the x-ray power pin
 
 // Super Power Status
@@ -42,6 +37,7 @@ bool ledBrightnessDown = true;
 
 // State Variables
 bool buttonPressed = false;
+int currentStep = 0;
 
 void setup() {
   // INPUTS
@@ -57,14 +53,21 @@ void setup() {
   led.show();
   
   pixels.begin(); // This initializes the NeoPixel library.
-  pixels.setBrightness(50);
+  pixels.setBrightness(50); 
 }
 
 void loop() {
 
   if (buttonPressed) {
-    delay(SUPER_HERO_DELAY);
-    buttonPressed = false;
+    if (currentStep == NUMPIXELS) {     // button was pressed and this is the first loop
+      delay(SUPER_HERO_DELAY);
+    } else if (currentStep != 0) {      // turning off LEDs one by one
+      pixels.setPixelColor(currentStep, pixels.Color(0,0,0));
+      currentStep--;
+      delay(SUPER_HERO_DELAY);    
+    } else {                            // all LEDs are off, reset buttonPressed state
+      buttonPressed = false;    
+    }
   } 
   
   strengthState = digitalRead(STRENGTH_BUTTON_PIN);
@@ -75,29 +78,29 @@ void loop() {
   
   if (strengthState == LOW) {
     for(int i=0;i<NUMPIXELS;i++){  
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-      pixels.setPixelColor(i, pixels.Color(0,150,0)); // Moderately bright green color.
-      pixels.show(); // This sends the updated pixel color to the hardware.
+      pixels.setPixelColor(i, pixels.Color(0,150,0)); // Green
+      pixels.show();
     }
     led.setPixelColor(0, pixels.Color(0, 150, 0));
     led.setBrightness(MAX_LED_BRIGHTNESS);
     led.show();
 
     buttonPressed = true;
+    currentStep = NUMPIXELS;
   } else if (flyState == LOW) {
     for(int i=0;i<NUMPIXELS;i++){  
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-      pixels.setPixelColor(i, pixels.Color(0,0,150)); // Moderately bright blue color.
-      pixels.show(); // This sends the updated pixel color to the hardware.
+      pixels.setPixelColor(i, pixels.Color(0,0,150)); // Blue
+      pixels.show(); 
     }
     led.setPixelColor(0, pixels.Color(0, 0, 150));
     led.setBrightness(MAX_LED_BRIGHTNESS);
     led.show();
 
     buttonPressed = true;
+    currentStep = NUMPIXELS;
   } else if (speedState == LOW) {
      for(int i=0;i<NUMPIXELS;i++){  
-      pixels.setPixelColor(i, pixels.Color(150,0,0)); // Moderately red color.
+      pixels.setPixelColor(i, pixels.Color(150,0,0)); // Red
       pixels.show(); 
     }
     led.setPixelColor(0, pixels.Color(150, 0, 0));
@@ -105,9 +108,10 @@ void loop() {
     led.show();
 
     buttonPressed = true;
+    currentStep = NUMPIXELS;
    } else if (xrayState == LOW) {
      for(int i=0;i<NUMPIXELS;i++){  
-      pixels.setPixelColor(i, pixels.Color(255,255,0)); // Moderately red color.
+      pixels.setPixelColor(i, pixels.Color(255,255,0)); // Yellow
       pixels.show(); 
     }
     led.setPixelColor(0, pixels.Color(255,255,0));
@@ -115,10 +119,11 @@ void loop() {
     led.show();
 
     buttonPressed = true;
+    currentStep = NUMPIXELS;
   } else {
     for(int i=0;i<NUMPIXELS;i++) {
       pixels.setPixelColor(i, pixels.Color(0,0,0)); // Off
-      pixels.show(); // This sends the updated pixel color to the hardware.      
+      pixels.show(); 
     }
     if (ledBrightness <= 1 && ledBrightnessDown) {
       ledBrightnessDown = false;
