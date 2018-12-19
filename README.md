@@ -10,3 +10,6 @@ For two years in a row my daughter has asked for one thing for Christmas, a coat
 
 ## Libraries
 - [Adafruit NeoPixel](https://github.com/adafruit/Adafruit_NeoPixel)
+
+## Wiring Diagram
+![alt text](https://github.com/kentyunge/super-shirt/blob/master/Wiring.png "Super Shirt Wiring Diagram")
