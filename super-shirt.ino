@@ -60,87 +60,96 @@ void loop() {
 
   if (buttonPressed) {
     if (currentStep == NUMPIXELS) {     // button was pressed and this is the first loop
+      currentStep--;
+      Serial.print("first step  ");
+      Serial.print(currentStep);
       delay(SUPER_HERO_DELAY);
     } else if (currentStep != 0) {      // turning off LEDs one by one
       pixels.setPixelColor(currentStep, pixels.Color(0,0,0));
+      pixels.show(); 
       currentStep--;
+      Serial.print("count down step  ");
+      Serial.print(currentStep);
       delay(SUPER_HERO_DELAY);    
     } else {                            // all LEDs are off, reset buttonPressed state
+      Serial.print("final step  ");
+      Serial.print(currentStep);
       buttonPressed = false;    
     }
-  } 
-  
-  strengthState = digitalRead(STRENGTH_BUTTON_PIN);
-  flyState = digitalRead(FLY_BUTTON_PIN);
-  speedState = digitalRead(SPEED_BUTTON_PIN);
-  xrayState = digitalRead(XRAY_BUTTON_PIN);
-  
-  
-  if (strengthState == LOW) {
-    for(int i=0;i<NUMPIXELS;i++){  
-      pixels.setPixelColor(i, pixels.Color(0,150,0)); // Green
-      pixels.show();
-    }
-    led.setPixelColor(0, pixels.Color(0, 150, 0));
-    led.setBrightness(MAX_LED_BRIGHTNESS);
-    led.show();
-
-    buttonPressed = true;
-    currentStep = NUMPIXELS;
-  } else if (flyState == LOW) {
-    for(int i=0;i<NUMPIXELS;i++){  
-      pixels.setPixelColor(i, pixels.Color(0,0,150)); // Blue
-      pixels.show(); 
-    }
-    led.setPixelColor(0, pixels.Color(0, 0, 150));
-    led.setBrightness(MAX_LED_BRIGHTNESS);
-    led.show();
-
-    buttonPressed = true;
-    currentStep = NUMPIXELS;
-  } else if (speedState == LOW) {
-     for(int i=0;i<NUMPIXELS;i++){  
-      pixels.setPixelColor(i, pixels.Color(150,0,0)); // Red
-      pixels.show(); 
-    }
-    led.setPixelColor(0, pixels.Color(150, 0, 0));
-    led.setBrightness(MAX_LED_BRIGHTNESS);
-    led.show();
-
-    buttonPressed = true;
-    currentStep = NUMPIXELS;
-   } else if (xrayState == LOW) {
-     for(int i=0;i<NUMPIXELS;i++){  
-      pixels.setPixelColor(i, pixels.Color(255,255,0)); // Yellow
-      pixels.show(); 
-    }
-    led.setPixelColor(0, pixels.Color(255,255,0));
-    led.setBrightness(MAX_LED_BRIGHTNESS);
-    led.show();
-
-    buttonPressed = true;
-    currentStep = NUMPIXELS;
   } else {
-    for(int i=0;i<NUMPIXELS;i++) {
-      pixels.setPixelColor(i, pixels.Color(0,0,0)); // Off
-      pixels.show(); 
-    }
-    if (ledBrightness <= 1 && ledBrightnessDown) {
-      ledBrightnessDown = false;
-      ledBrightness = 2;
-    } else if (ledBrightness >= MAX_LED_BRIGHTNESS && !ledBrightnessDown) {
-      ledBrightnessDown = true;
-      ledBrightness = MAX_LED_BRIGHTNESS - 1;
-    } else if (ledBrightnessDown) {
-      ledBrightness = ledBrightness - 1;  
+  
+    strengthState = digitalRead(STRENGTH_BUTTON_PIN);
+    flyState = digitalRead(FLY_BUTTON_PIN);
+    speedState = digitalRead(SPEED_BUTTON_PIN);
+    xrayState = digitalRead(XRAY_BUTTON_PIN);
+    
+    
+    if (strengthState == LOW) {
+      for(int i=0;i<NUMPIXELS;i++){  
+        pixels.setPixelColor(i, pixels.Color(0,150,0)); // Green
+        pixels.show();
+      }
+      led.setPixelColor(0, pixels.Color(0, 150, 0));
+      led.setBrightness(MAX_LED_BRIGHTNESS);
+      led.show();
+  
+      buttonPressed = true;
+      currentStep = NUMPIXELS;
+    } else if (flyState == LOW) {
+      for(int i=0;i<NUMPIXELS;i++){  
+        pixels.setPixelColor(i, pixels.Color(0,0,150)); // Blue
+        pixels.show(); 
+      }
+      led.setPixelColor(0, pixels.Color(0, 0, 150));
+      led.setBrightness(MAX_LED_BRIGHTNESS);
+      led.show();
+  
+      buttonPressed = true;
+      currentStep = NUMPIXELS;
+    } else if (speedState == LOW) {
+       for(int i=0;i<NUMPIXELS;i++){  
+        pixels.setPixelColor(i, pixels.Color(150,0,0)); // Red
+        pixels.show(); 
+      }
+      led.setPixelColor(0, pixels.Color(150, 0, 0));
+      led.setBrightness(MAX_LED_BRIGHTNESS);
+      led.show();
+  
+      buttonPressed = true;
+      currentStep = NUMPIXELS;
+     } else if (xrayState == LOW) {
+       for(int i=0;i<NUMPIXELS;i++){  
+        pixels.setPixelColor(i, pixels.Color(255,255,0)); // Yellow
+        pixels.show(); 
+      }
+      led.setPixelColor(0, pixels.Color(255,255,0));
+      led.setBrightness(MAX_LED_BRIGHTNESS);
+      led.show();
+  
+      buttonPressed = true;
+      currentStep = NUMPIXELS;
     } else {
-      ledBrightness = ledBrightness + 1;  
-    }
-    led.setPixelColor(0, pixels.Color(255,255,255));
-    led.setBrightness(ledBrightness);
-    led.show();
-
-    delay(LED_PULSE_DELAY);
+      for(int i=0;i<NUMPIXELS;i++) {
+        pixels.setPixelColor(i, pixels.Color(0,0,0)); // Off
+        pixels.show(); 
+      }
+      if (ledBrightness <= 1 && ledBrightnessDown) {
+        ledBrightnessDown = false;
+        ledBrightness = 2;
+      } else if (ledBrightness >= MAX_LED_BRIGHTNESS && !ledBrightnessDown) {
+        ledBrightnessDown = true;
+        ledBrightness = MAX_LED_BRIGHTNESS - 1;
+      } else if (ledBrightnessDown) {
+        ledBrightness = ledBrightness - 1;  
+      } else {
+        ledBrightness = ledBrightness + 1;  
+      }
+      led.setPixelColor(0, pixels.Color(255,255,255));
+      led.setBrightness(ledBrightness);
+      led.show();
+  
+      delay(LED_PULSE_DELAY);
+    }  
   }
 }
 
